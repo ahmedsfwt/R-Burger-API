@@ -198,12 +198,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 
+app.UseCors("AllowFrontend");
+
 app.UseRequestLocalization();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseRateLimiter();
 
-app.UseCors("AllowFrontend");
+
 
 app.MapControllers();
 
