@@ -160,6 +160,9 @@ public interface IOrderRepository
     Task<int> GetOrderCountAsync(
         DateTime fromUtcInclusive, DateTime toUtcExclusive, CancellationToken cancellationToken);
 
+    Task<int> GetDeliveredOrderCountAsync(
+        DateTime fromUtcInclusive, DateTime toUtcExclusive, CancellationToken cancellationToken);
+
     // Per-calendar-day captured revenue (§1.1) across a [from, to) UTC window, excluding
     // cancelled orders (§1.3) - powers GET /api/v1/admin/analytics/revenue-trend.
     Task<Dictionary<DateTime, decimal>> GetCapturedRevenueByDayAsync(

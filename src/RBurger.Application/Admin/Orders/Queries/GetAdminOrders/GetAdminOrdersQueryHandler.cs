@@ -34,6 +34,7 @@ public class GetAdminOrdersQueryHandler
             CustomerName = o.CustomerName,
             Total = o.Total,
             Stage = o.Stage,
+            IsCancelled = o.IsCancelled,
             CreatedAt = o.CreatedAt
         }).ToList();
 

@@ -276,9 +276,19 @@ internal class FakeOrderRepository : IOrderRepository
         var count = AddedOrders.Count(o =>
             !o.IsCancelled
             && o.CreatedAt >= fromUtcInclusive
-            && o.CreatedAt < toUtcExclusive
-            && o.Payment is not null
-            && o.Payment.Status == "captured");
+            && o.CreatedAt < toUtcExclusive);
+
+        return Task.FromResult(count);
+    }
+
+    public Task<int> GetDeliveredOrderCountAsync(
+    DateTime fromUtcInclusive, DateTime toUtcExclusive, CancellationToken cancellationToken)
+    {
+        var count = AddedOrders.Count(o =>
+            !o.IsCancelled
+            && o.Stage == OrderStage.Delivered
+            && o.CreatedAt >= fromUtcInclusive
+            && o.CreatedAt < toUtcExclusive);
 
         return Task.FromResult(count);
     }

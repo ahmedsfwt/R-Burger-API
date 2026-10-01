@@ -344,9 +344,18 @@ public class OrderRepository : IOrderRepository
         return await _context.Orders
             .Where(o => !o.IsCancelled
                         && o.CreatedAt >= fromUtcInclusive
-                        && o.CreatedAt < toUtcExclusive
-                        && o.Payment != null
-                        && o.Payment.Status == "captured")
+                        && o.CreatedAt < toUtcExclusive)
+            .CountAsync(cancellationToken);
+    }
+
+    public async Task<int> GetDeliveredOrderCountAsync(
+    DateTime fromUtcInclusive, DateTime toUtcExclusive, CancellationToken cancellationToken)
+    {
+        return await _context.Orders
+            .Where(o => !o.IsCancelled
+                        && o.Stage == OrderStage.Delivered
+                        && o.CreatedAt >= fromUtcInclusive
+                        && o.CreatedAt < toUtcExclusive)
             .CountAsync(cancellationToken);
     }
 

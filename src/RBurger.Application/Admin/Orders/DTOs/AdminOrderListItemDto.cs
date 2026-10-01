@@ -14,5 +14,6 @@ public class AdminOrderListItemDto
     public string CustomerName { get; set; } = string.Empty;
     public decimal Total { get; set; }
     public OrderStage Stage { get; set; }
+    public bool IsCancelled { get; set; }
     public DateTime CreatedAt { get; set; }
 }

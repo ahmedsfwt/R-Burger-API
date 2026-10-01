@@ -52,6 +52,8 @@ public class GetAnalyticsOverviewQueryHandler : IRequestHandler<GetAnalyticsOver
         var revenue = await _orderRepository.GetCapturedRevenueAsync(from, to, cancellationToken);
         var orders = await _orderRepository.GetOrderCountAsync(from, to, cancellationToken);
         var avgOrderValue = orders == 0 ? 0m : revenue / orders;
+        var deliveredOrders = await _orderRepository.GetDeliveredOrderCountAsync(from, to, cancellationToken);
+        var completionRate = orders == 0 ? (decimal?)null : Math.Round((decimal)deliveredOrders / orders * 100m, 2);
 
         // §2.2: fixed weekly comparison, independent of `range` - this week vs the week before.
         var currentWeekStart = today.AddDays(-6);
@@ -64,18 +66,25 @@ public class GetAnalyticsOverviewQueryHandler : IRequestHandler<GetAnalyticsOver
         var currentWeekAov = currentWeekOrders == 0 ? 0m : currentWeekRevenue / currentWeekOrders;
         var previousWeekAov = previousWeekOrders == 0 ? 0m : previousWeekRevenue / previousWeekOrders;
 
+        var currentWeekDelivered = await _orderRepository.GetDeliveredOrderCountAsync(currentWeekStart, tomorrow, cancellationToken);
+        var previousWeekDelivered = await _orderRepository.GetDeliveredOrderCountAsync(previousWeekStart, currentWeekStart, cancellationToken);
+        var currentWeekCompletionRate = currentWeekOrders == 0 ? 0m : (decimal)currentWeekDelivered / currentWeekOrders * 100m;
+        var previousWeekCompletionRate = previousWeekOrders == 0 ? 0m : (decimal)previousWeekDelivered / previousWeekOrders * 100m;
+
         return new AnalyticsOverviewDto
         {
             TotalRevenue = revenue,
             TotalOrders = orders,
             AvgOrderValue = avgOrderValue,
-            CompletionRatePercent = null, // see this record's XML comment
+            CompletionRatePercent = completionRate,
             Deltas = new AnalyticsOverviewDeltasDto
             {
                 Revenue = PercentDelta(currentWeekRevenue, previousWeekRevenue),
                 Orders = PercentDelta(currentWeekOrders, previousWeekOrders),
                 AvgOrderValue = PercentDelta(currentWeekAov, previousWeekAov),
-                CompletionRate = null
+                CompletionRate = previousWeekCompletionRate == 0 && currentWeekCompletionRate == 0
+                    ? 0m
+                    : PercentDelta(currentWeekCompletionRate, previousWeekCompletionRate)
             }
         };
     }

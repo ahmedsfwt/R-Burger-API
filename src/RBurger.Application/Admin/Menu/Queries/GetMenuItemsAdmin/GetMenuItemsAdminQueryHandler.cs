@@ -23,6 +23,7 @@ public class GetMenuItemsAdminQueryHandler
         {
             Id = mi.Id,
             CategoryKey = mi.Category.Key,
+            BranchId = mi.BranchId,
             NameAr = mi.NameAr,
             NameEn = mi.NameEn,
             DescriptionAr = mi.DescriptionAr,

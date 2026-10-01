@@ -79,6 +79,7 @@ public class UpdateMenuItemCommandHandler : IRequestHandler<UpdateMenuItemComman
         {
             Id = menuItem.Id,
             CategoryKey = currentCategory?.Key ?? string.Empty,
+            BranchId = menuItem.BranchId,
             NameAr = menuItem.NameAr,
             NameEn = menuItem.NameEn,
             DescriptionAr = menuItem.DescriptionAr,
