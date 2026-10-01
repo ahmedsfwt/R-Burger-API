@@ -1,14 +1,15 @@
+using Amazon.S3;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RBurger.Application.Common.Interfaces;
 using RBurger.Infrastructure.Authentication;
 using RBurger.Infrastructure.Caching;
+using RBurger.Infrastructure.Payments;
 using RBurger.Infrastructure.Persistence;
 using RBurger.Infrastructure.Persistence.Repositories;
 using RBurger.Infrastructure.Realtime;
 using RBurger.Infrastructure.Storage;
-using RBurger.Infrastructure.Payments;
 
 namespace RBurger.Infrastructure.DependencyInjection;
 
@@ -71,7 +72,15 @@ public static class ServiceCollectionExtensions
         // StorageNotConfiguredException until a real AWSSDK.S3-backed implementation replaces
         // it (no AWS bucket/region/credentials/CDN domain are specified in Documentation
         // v1.2). See NotConfiguredMenuItemImageStorage's XML comment.
-        services.AddScoped<IMenuItemImageStorage, NotConfiguredMenuItemImageStorage>();
+        services.Configure<S3Settings>(configuration.GetSection(S3Settings.SectionName));
+
+        services.AddSingleton<IAmazonS3>(_ =>
+        {
+            var region = configuration["AWS:Region"];
+            return new AmazonS3Client(Amazon.RegionEndpoint.GetBySystemName(region));
+        });
+
+        services.AddScoped<IMenuItemImageStorage, S3MenuItemImageStorage>();
 
         // Day 12 addition (Blocking Issue #3, same scaffold-only approach as the image storage
         // registration above - approved). No Paymob/Fawry credentials are specified in
