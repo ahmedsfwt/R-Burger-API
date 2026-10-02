@@ -181,6 +181,7 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
             "https://rb-resturant.vercel.app",
             "https://rb-resturant-admin.vercel.app",
+            "https://main.d1c5t9662et9yu.amplifyapp.com",
             "http://localhost:5173",
             "http://localhost:5174"
         )
