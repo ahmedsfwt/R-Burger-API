@@ -9,7 +9,7 @@ using RBurger.Application.DependencyInjection;
 using RBurger.Infrastructure.Authentication;
 using RBurger.Infrastructure.DependencyInjection;
 using RBurger.Infrastructure.Realtime;
-
+using Microsoft.AspNetCore.HttpOverrides;
 var builder = WebApplication.CreateBuilder(args);
 
 // §8.1: "Hub route: /hubs/orders". Shared constant so the JWT query-string check below and
@@ -189,7 +189,17 @@ builder.Services.AddCors(options =>
         .AllowAnyHeader());
 });
 
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    // DuckDNS has no fixed IP range, so KnownProxies/KnownNetworks stay empty -
+    // trust whatever immediately precedes Kestrel (the reverse proxy on the same box).
+    options.ForwardedForHeaderName = "X-Forwarded-For";
+});
+
 var app = builder.Build();
+
+app.UseForwardedHeaders();
 
 if (app.Environment.IsDevelopment())
 {
