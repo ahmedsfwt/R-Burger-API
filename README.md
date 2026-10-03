@@ -98,7 +98,7 @@ Dependencies point inward. Controllers contain no business logic: every write is
 ## Project structure
 
 ```text
-RBurger-api/
+R-Burger-API/
 ├── src/
 │   ├── RBurger.Domain/            Entities and the OrderStage enum — no dependencies
 │   ├── RBurger.Application/       CQRS handlers, DTOs, validators, interfaces, pipeline behaviors
@@ -115,8 +115,8 @@ RBurger-api/
 **Requirements:** .NET 8 SDK and SQL Server (local, container or hosted). Paymob and AWS credentials are only needed for online payment and photo upload.
 
 ```bash
-git clone https://github.com/ahmedsfwt/RBurger-api.git
-cd RBurger-api
+git clone https://github.com/ahmedsfwt/R-Burger-API.git
+cd R-Burger-API
 
 # 1. Secrets (never put real values in appsettings.json)
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=.;Database=RBurger;Trusted_Connection=True;TrustServerCertificate=True" --project src/RBurger.Api
